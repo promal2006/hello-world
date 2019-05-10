@@ -1,0 +1,29 @@
+resources:
+  - name: hello-world-pipeline-git
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/promal2006/hello-world.git
+
+jobs:
+  - name: unit-test
+    plan:
+      - get: hello-world-pipeline-git
+        trigger: true
+      - task: gradle-test
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: gradle
+          inputs:
+            - name: hello-world-pipeline-git
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                set -e
+                cd hello-world-pipeline-git
+                gradle test
